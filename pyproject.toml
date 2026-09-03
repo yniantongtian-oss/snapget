@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "snapget"
+version = "1.0.0"
+authors = [
+  { name="yniantongtian-oss" },
+]
+description = "全网主流自媒体无水印原画音视频/图集批量高速抓取器"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "rich>=13.0.0",
+    "yt-dlp>=2024.0.0",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.scripts]
+snapget = "snapget.cli:cli_main"

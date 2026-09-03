@@ -3,9 +3,9 @@ import sys
 from pathlib import Path
 
 try:
-    from .core import get_extractor, MediaDownloader, ParseResult
+    from .core import get_extractor, MediaDownloader, ParseResult, search_media
 except (ImportError, ValueError):
-    from core import get_extractor, MediaDownloader, ParseResult
+    from core import get_extractor, MediaDownloader, ParseResult, search_media
 
 try:
     from rich.console import Console
@@ -46,11 +46,33 @@ def cli_main():
     )
     parser.add_argument("url", nargs="?", help="目标网页链接或手机端复制的完整分享口令")
     parser.add_argument("-o", "--output", default="downloads", help="下载保存路径 (默认: downloads)")
+    parser.add_argument("-s", "--search", help="直接按关键词或UP主搜索视频并列出")
     parser.add_argument("-w", "--web", action="store_true", help="启动本地 Web 交互页面")
     parser.add_argument("-p", "--port", type=int, default=8080, help="Web 服务监听端口 (默认: 8080)")
     parser.add_argument("--info-only", action="store_true", help="仅解析媒体直链，不执行下载")
 
     args = parser.parse_args()
+
+    if args.search:
+        print_info(f"正在全网搜索关键词/UP主: [bold]{args.search}[/bold] ...")
+        results = search_media(args.search)
+        if not results:
+            print_error("未搜索到相关作品")
+            return
+        if HAS_RICH:
+            table = Table(title=f"「{args.search}」搜索结果 (前 {len(results)} 条)", border_style="green")
+            table.add_column("序号", style="cyan")
+            table.add_column("标题", style="white")
+            table.add_column("UP主/作者", style="yellow")
+            table.add_column("时长", style="magenta")
+            table.add_column("链接", style="blue")
+            for idx, it in enumerate(results, 1):
+                table.add_row(str(idx), it.title[:35], f"@{it.author}", it.duration, it.url)
+            console.print(table)
+        else:
+            for idx, it in enumerate(results, 1):
+                print(f"[{idx}] @{it.author} - {it.title} ({it.duration}) -> {it.url}")
+        return
 
     if args.web or not args.url:
         from .web import run_web_server

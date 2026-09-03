@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "SnapGet 媒体抓取助手",
+  "version": "1.2.0",
+  "description": "浏览抖音、小红书、B站等平台时，一键直接提取高清无水印原画视频与原图图集。",
+  "permissions": [
+    "activeTab",
+    "downloads"
+  ],
+  "host_permissions": [
+    "*://*.douyin.com/*",
+    "*://*.xiaohongshu.com/*",
+    "*://*.bilibili.com/*",
+    "*://*.kuaishou.com/*",
+    "*://*.weibo.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "SnapGet 媒体提取"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.douyin.com/*",
+        "*://*.xiaohongshu.com/*",
+        "*://*.bilibili.com/*",
+        "*://*.kuaishou.com/*",
+        "*://*.weibo.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

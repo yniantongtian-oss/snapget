@@ -23,3 +23,9 @@ classifiers = [
 
 [project.scripts]
 snapget = "snapget.cli:cli_main"
+
+[tool.setuptools]
+packages = ["snapget", "snapget.core", "snapget.core.extractors", "snapget.web"]
+
+[tool.setuptools.package-dir]
+snapget = "."

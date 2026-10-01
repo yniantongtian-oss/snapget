@@ -41,6 +41,10 @@ def print_error(msg: str):
 
 
 def cli_main():
+    # Redirected Windows output can use a legacy codec that cannot print Chinese.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure") and not stream.isatty():
+            stream.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(
         description="SnapGet - 全网主流自媒体无水印音视频/图集批量抓取工具"
     )

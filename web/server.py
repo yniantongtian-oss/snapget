@@ -718,9 +718,24 @@ class SnapGetRequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
 
     def do_POST(self):
-        content_len = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(content_len).decode("utf-8", errors="replace")
-        data = json.loads(body) if body else {}
+        try:
+            content_len = int(self.headers.get("Content-Length", 0))
+            if content_len < 0:
+                raise ValueError("Invalid Content-Length")
+        except ValueError:
+            self._json_response({"success": False, "error": "Invalid Content-Length"}, 400)
+            return
+        if content_len > 1024 * 1024:
+            self._json_response({"success": False, "error": "Request body is too large"}, 413)
+            return
+        try:
+            body = self.rfile.read(content_len).decode("utf-8")
+            data = json.loads(body) if body else {}
+            if not isinstance(data, dict):
+                raise ValueError("Expected a JSON object")
+        except (UnicodeDecodeError, ValueError):
+            self._json_response({"success": False, "error": "Expected a valid JSON object"}, 400)
+            return
 
         if self.path == "/api/search":
             self.handle_search(data)
@@ -741,7 +756,11 @@ class SnapGetRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(json.dumps(obj, ensure_ascii=False).encode("utf-8"))
 
     def handle_search(self, data: dict):
-        kw = data.get("keyword", "").strip()
+        keyword = data.get("keyword", "")
+        if not isinstance(keyword, str):
+            self._json_response({"success": False, "error": "Keyword must be a string"}, 400)
+            return
+        kw = keyword.strip()
         platform = data.get("platform", "bilibili")
         if not kw:
             self._json_response({"success": False, "error": "关键词不能为空"}, 400)
@@ -768,7 +787,11 @@ class SnapGetRequestHandler(BaseHTTPRequestHandler):
             self._json_response({"success": False, "error": str(e)}, 500)
 
     def handle_parse(self, data: dict):
-        text = data.get("text", "").strip()
+        text = data.get("text", "")
+        if not isinstance(text, str):
+            self._json_response({"success": False, "error": "Text must be a string"}, 400)
+            return
+        text = text.strip()
         if not text:
             self._json_response({"success": False, "error": "Empty text provided"}, 400)
             return

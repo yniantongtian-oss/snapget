@@ -41,10 +41,10 @@ cd snapget
 ### 2. 安装依赖
 
 ```bash
-pip install -r requirements.txt
+python -m pip install .
 ```
 
-### 4. 浏览器扩展插件 / 油猴脚本 (最爽玩法)
+### 3. 浏览器扩展插件 / 油猴脚本
 
 小红书、抖音等平台搜索往往有严格的网页反爬和登录风控。直接在浏览器里刷视频/图集，配合插件一键抓取最省心：
 
@@ -59,7 +59,7 @@ pip install -r requirements.txt
 直接双击运行或在命令行敲入：
 
 ```bash
-python -m snapget.main
+snapget --web
 ```
 
 启动后会自动在浏览器中弹出 `http://127.0.0.1:8080` 交互界面：
@@ -71,13 +71,13 @@ python -m snapget.main
 
 ```bash
 # 自动解析并下载到默认 downloads 目录
-python -m snapget.cli "https://v.douyin.com/xxxxx/"
+snapget "https://v.douyin.com/xxxxx/"
 
 # 指定保存路径
-python -m snapget.cli "https://www.bilibili.com/video/BVxxxxxx" -o my_videos/
+snapget "https://www.bilibili.com/video/BVxxxxxx" -o my_videos/
 
 # 仅查看解析出的无水印直链清单，不执行下载
-python -m snapget.cli "http://xhslink.com/a/xxxxx" --info-only
+snapget "http://xhslink.com/a/xxxxx" --info-only
 ```
 
 ---
@@ -108,6 +108,12 @@ snapget/
 ```
 
 ---
+
+## 验证
+
+`python -m unittest discover -s tests -v` 验证解析器路由、文件名处理和实际回环 HTTP 服务。Windows/Linux CI 还构建 wheel/sdist，从源码目录外安装 wheel，并检查 CLI 与 Web 模块可导入。HTTP 接口拒绝格式错误、非对象 JSON、错误字段类型和超过 1 MiB 的请求。
+
+这些检查不代表所有平台的在线解析持续可用；网站接口、登录要求和媒体访问权限需要使用自己的授权素材另行验证。
 
 ## ⚠️ 免责声明 (Disclaimer)
 

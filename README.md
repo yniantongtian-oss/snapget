@@ -1,128 +1,101 @@
-# ⚡ SnapGet (全网主流自媒体无水印抓取工具)
+# SnapGet — Media Retrieval and Source Inspection
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.9+-3776AB?style=flat&logo=python&logoColor=white" alt="Python Version" />
-  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License" />
-  <img src="https://img.shields.io/badge/Platform-Windows%20|%20macOS%20|%20Linux-blue" alt="Platform" />
-  <img src="https://img.shields.io/badge/Status-Active-brightgreen" alt="Status" />
+  <img src="https://img.shields.io/badge/Python-3.9+-3776AB?style=flat&logo=python&logoColor=white" alt="Python version" />
+  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT license" />
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-blue" alt="Platform support" />
 </p>
 
-一款极轻量、开箱即用的多平台自媒体无水印原画视频/图集批量抓取器。自带现代暗黑风格本地 Web 交互界面与终端 CLI 工具，支持直接从手机端复制杂乱分享口令一键解析。
+A lightweight local Web and command-line tool for inspecting shared media URLs and downloading media that you are entitled to access, preserve, or reuse. It supports platform-specific extractors and an optional general-purpose downloader integration.
 
----
+The tool can assist an authorized video-production asset workflow, but downloading content does not grant copyright, redistribution rights, or permission to bypass platform controls.
 
-## ✨ 核心特性
+## Features
 
-- **无水印原画直提取**：
-  - **抖音**：支持手机分享口令识别、自动重定向短链、提取 1080P/720P 无水印 MP4 真实流以及图集高清图片列表。
-  - **小红书**：自动清洗分享短链接，突破平台压缩限制，提取无水印超清原图图集与视频。
-  - **哔哩哔哩 (Bilibili)**：支持 `b23.tv` 短链与 `BV/AV` 号解析，获取封面、UP主信息及分块视频流。
-  - **通用扩展支持**：集成 yt-dlp 引擎，作为兜底扩展支持主流国外平台（YouTube、X/Twitter 等）与其它国内视频站点。
-- **开箱即用可视化 WebUI**：
-  - 无需任何复杂前端环境或 Node.js 构建，零多余依赖，单命令自启本地轻量服务。
-  - 暗黑极客质感，支持资源卡片式预览、一键复制直链、单文件下载与全选一键下载。
-- **高效 CLI 终端工具**：
-  - 基于 `rich` 打造美观终端交互：状态面板、实时多任务下载进度条与测速。
-- **健壮工程化实现**：
-  - 自动过滤与纠正 Windows 非法文件名字符（`\/*?:"<>|`），防止保存异常。
-  - 解析器高度解耦（BaseExtractor），平台接口变动时单文件即可快速维护。
+- Extractors for shared links to Douyin, Xiaohongshu, and Bilibili; a general `yt-dlp` fallback supports other compatible sources where permitted.
+- Media metadata, available streams, image-gallery assets, and source URLs when the relevant platform exposes them.
+- Local Web interface with previews, resource cards, and download actions.
+- Rich-based terminal output, transfer status, and progress reporting.
+- Windows-compatible filename sanitation and modular extractor classes.
+- Browser extension and optional userscript integrations where the platform and your permissions allow them.
 
----
+Availability depends on live site behavior and authorization; a working offline test does not guarantee that an external platform remains accessible.
 
-## 🚀 快速上手
+## Installation
 
-### 1. 克隆仓库
+Requires Python 3.9 or newer.
 
 ```bash
 git clone https://github.com/yniantongtian-oss/snapget.git
 cd snapget
-```
-
-### 2. 安装依赖
-
-```bash
 python -m pip install .
 ```
 
-### 3. 浏览器扩展插件 / 油猴脚本
-
-小红书、抖音等平台搜索往往有严格的网页反爬和登录风控。直接在浏览器里刷视频/图集，配合插件一键抓取最省心：
-
-- **Chrome / Edge 扩展插件安装**：
-  1. 打开浏览器扩展管理页面（Edge 输 `edge://extensions`，Chrome 输 `chrome://extensions`）。
-  2. 开启右上角 **「开发者模式 (Developer mode)」**。
-  3. 点击 **「加载解压缩的扩展 (Load unpacked)」**，选择本项目下的 `extension/` 文件夹即可。
-  4. 之后无论是刷小红书还是刷抖音，右下角会自动悬浮 **「⚡ 提取无水印素材」** 按钮，点一下直接把屏幕上的原图、原画视频通通打包！
-- **油猴脚本 (Tampermonkey)**：
-  - 如果装了油猴插件，直接把根目录的 `snapget.user.js` 导入即可使用。
-
-直接双击运行或在命令行敲入：
+## Local Web interface
 
 ```bash
 snapget --web
 ```
 
-启动后会自动在浏览器中弹出 `http://127.0.0.1:8080` 交互界面：
-1. 直接把手机端或电脑端复制的内容粘进输入框（哪怕包含前后中文描述也无所谓，程序会自动正则筛选提取合法链接）。
-2. 点击 **「开始解析」**。
-3. 预览解析出的视频或无水印高清图集，点击 **「一键下载全部到本地」** 或单独下载。
+The interface is normally available at `http://127.0.0.1:8080`. Paste an authorized shared URL, inspect the available assets, and select the files you want to retain.
 
-#### 方式 B：终端命令行极速下载
+## Command line
 
 ```bash
-# 自动解析并下载到默认 downloads 目录
-snapget "https://v.douyin.com/xxxxx/"
-
-# 指定保存路径
+# Download an authorized public media item
 snapget "https://www.bilibili.com/video/BVxxxxxx" -o my_videos/
 
-# 仅查看解析出的无水印直链清单，不执行下载
-snapget "http://xhslink.com/a/xxxxx" --info-only
+# Display a source inspection result without downloading files
+snapget "https://example.com/authorized-media" --info-only
 ```
 
----
+Actual supported sources and availability should be verified against the installed extractor implementations.
 
-## 📂 项目结构
+## Optional browser integration
+
+A browser extension is provided under `extension/`, and a userscript may be present at the repository root. Load only code that you have reviewed and only on websites where you are authorized to retrieve the content.
+
+For Chromium browsers, open the extension management page, enable developer mode, and load the unpacked `extension/` directory. Disable browser integration when it is not needed.
+
+## Architecture
 
 ```text
-snapget/
-├── core/
-│   ├── extractors/            # 平台独立解析层
-│   │   ├── base.py            # 解析器基类与短链重定向
-│   │   ├── douyin.py          # 抖音视频/图集解析器
-│   │   ├── xiaohongshu.py     # 小红书原图/视频解析器
-│   │   ├── bilibili.py        # B站音视频解析器
-│   │   └── generic.py         # 通用 yt-dlp 扩展解析器
-│   ├── downloader.py          # 流式分块下载引擎
-│   └── models.py              # 数据结构与类型定义
-├── web/
-│   └── server.py              # 轻量原生可视化 Web 服务
-├── tests/
-│   └── test_core.py           # 核心用例单元测试
-├── cli.py                     # CLI 命令行交互逻辑
-├── main.py                    # 入口启动引导脚本
-├── requirements.txt           # 核心依赖说明
-├── pyproject.toml             # 打包配置文件
-├── LICENSE                    # MIT 开源授权协议
-└── README.md
+core/
+  extractors/
+    base.py           Shared interface and redirect handling
+    douyin.py         Douyin extractor
+    xiaohongshu.py    Xiaohongshu extractor
+    bilibili.py       Bilibili extractor
+    generic.py        Optional general extractor
+  downloader.py       Chunked transfer implementation
+  models.py           Data contracts
+web/server.py         Local web service
+tests/test_core.py    Core regression tests
+cli.py                Terminal interface
+main.py               Startup integration
+pyproject.toml        Package build configuration
+requirements.txt      Dependency list
+LICENSE               Repository license
 ```
 
----
+## Validation
 
-## 验证
+```bash
+python -m unittest discover -s tests -v
+```
 
-`python -m unittest discover -s tests -v` 验证解析器路由、文件名处理和实际回环 HTTP 服务。Windows/Linux CI 还构建 wheel/sdist，从源码目录外安装 wheel，并检查 CLI 与 Web 模块可导入。HTTP 接口拒绝格式错误、非对象 JSON、错误字段类型和超过 1 MiB 的请求。
+The offline suite covers extractor routing, filename handling, and loopback HTTP behavior. Linux and Windows CI also build distribution artifacts, install the wheel outside the source directory, and check core module imports. The HTTP interface rejects malformed or oversized JSON requests.
 
-这些检查不代表所有平台的在线解析持续可用；网站接口、登录要求和媒体访问权限需要使用自己的授权素材另行验证。
+These checks do not establish ongoing compatibility with all external websites or prove rights to access a particular asset.
 
-## ⚠️ 免责声明 (Disclaimer)
+## Responsible use
 
-1. 本项目仅供编程学习、技术交流以及个人合理备份使用。
-2. 请勿将本项目用于任何商业牟利、批量侵权搬运或破坏平台正常运营秩序的行为。
-3. 用户使用本项目下载的任何音视频、图文素材，其知识产权均归原作者所有，若因侵权产生任何纠纷，由使用者自行承担全部责任。
+- Download, copy, and publish only media for which you have the necessary permissions.
+- Respect content creator rights, licenses, usage restrictions, and applicable law.
+- Do not use the project to evade access controls, authentication barriers, paywalls, or DRM.
+- Do not interpret a file lacking a watermark as permission to redistribute it.
+- Review source provenance and attribution before using assets in a public or commercial video.
 
----
+## License
 
-## 📄 开源许可
-
-本项目基于 [MIT License](LICENSE) 协议发布，欢迎 Star、提 Issue 或发起 PR 共同完善！
+MIT. See [LICENSE](LICENSE). Third-party media and services remain subject to their own terms.

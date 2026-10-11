@@ -1,0 +1,15 @@
+{
+  "modules": [
+    "snapget",
+    "snapget.core",
+    "snapget.core.extractors",
+    "snapget.web"
+  ],
+  "cli": "snapget",
+  "extras": "",
+  "commands": [
+    [
+      "--help"
+    ]
+  ]
+}
